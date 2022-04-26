@@ -34,3 +34,5 @@ def buttonLoop(ev3, action_map):
         pressed = ev3.buttons.pressed()
         if len(pressed) > 0:
             action_map[pressed[0]].act()
+
+TEXT_HEIGHT = 16

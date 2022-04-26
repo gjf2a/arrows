@@ -8,6 +8,7 @@ from pybricks.robotics import DriveBase
 from pybricks.media.ev3dev import SoundFile, ImageFile
 
 import driver
+import menus
 
 ev3 = EV3Brick()
 
@@ -16,4 +17,10 @@ right = Motor(Port.D)
 
 ev3.speaker.beep()
 
-driver.drive(ev3, left, right)
+titles = ['drive']
+functions = [driver.drive]
+
+choice = menus.menuShowAll(ev3, ['drive'])
+print("Choice:", choice)
+(functions[choice])(ev3, left, right)
+print("Done")
