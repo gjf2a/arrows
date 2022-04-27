@@ -3,20 +3,24 @@ import lib
 
 def menuShowAll(ev3, items: List[str]) -> int:
     current = 0
+    down = False
     refresh(ev3, items, current)
     while True:
         pressed = ev3.buttons.pressed()
-        if Button.CENTER in pressed:
-            ev3.speaker.beep()
-            return current
-        elif Button.UP in pressed or Button.LEFT in pressed:
-            current = (current - 1) % len(items)
-            refresh(ev3, items, current)
-            ev3.speaker.beep()
-        elif Button.DOWN in pressed or Button.RIGHT in pressed:
-            current = (current + 1) % len(items)
-            refresh(ev3, items, current)
-            ev3.speaker.beep()
+        if len(pressed) > 0:
+            if not down:
+                ev3.speaker.beep()
+                down = True
+                if Button.CENTER in pressed:
+                    return current
+                elif Button.UP in pressed or Button.LEFT in pressed:
+                    current = (current - 1) % len(items)
+                    refresh(ev3, items, current)
+                elif Button.DOWN in pressed or Button.RIGHT in pressed:
+                    current = (current + 1) % len(items)
+                    refresh(ev3, items, current)
+        else:
+            down = False
 
 def refresh(ev3, items: List[str], current: int):
     ev3.screen.clear()
