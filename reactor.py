@@ -2,9 +2,13 @@ from pybricks.ev3devices import (Motor, TouchSensor, ColorSensor,
                                  InfraredSensor, UltrasonicSensor, GyroSensor)
 from pybricks.parameters import Port, Stop, Direction, Button, Color
 import lib
+from menus import menuManyOptions
+
+cutoffs = ['50', '100', '150']
 
 def react(ev3, left, right):
-    cutoff = 100
+    choices = menuManyOptions(ev3, ['Cutoff'], [cutoffs])
+    cutoff = int(cutoffs[choices[0]])
     under = lib.Left(left, right, 360)
     over = lib.Forward(left, right, 360)
     sonar = UltrasonicSensor(Port.S4)
