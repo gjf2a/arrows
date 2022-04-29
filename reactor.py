@@ -4,6 +4,9 @@ from pybricks.parameters import Port, Stop, Direction, Button, Color
 import lib
 from menus import menuManyOptions
 
+# These values are in millimeters. 
+# 150 was barely enough to dodge the wall. We need some further-out ones. Keep one of 50 or 100 for the
+# collision experience.
 cutoffs = ['50', '100', '150']
 
 def react(ev3, left, right):
