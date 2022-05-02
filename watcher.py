@@ -4,6 +4,7 @@ from pybricks.parameters import Port, Stop, Direction, Button, Color
 import lib
 
 def watch(ev3, left, right):
+    ev3.screen.clear()
     sonar = UltrasonicSensor(Port.S4)
     last = 0
     while True:
