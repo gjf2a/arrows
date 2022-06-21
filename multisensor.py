@@ -37,7 +37,7 @@ ports = {'S1': Port.S1, 'S2': Port.S2, 'S3': Port.S3, 'S4': Port.S4}
 
 labels  = ['Default'] + list(ports.keys())
 tests   = ['<=', '>']
-values  = [['50', '100', '150', '200', '250', '300'], ['0', '1'], ['20', '40', '60', '80'], ['20', '40', '60', '80']]
+values  = [['50', '100', '150', '200', '250', '300'], ['0', '1']]#, ['20', '40', '60', '80'], ['20', '40', '60', '80']]
 actions = ['Stop', 'Forward', 'Backward', 'Left', 'Right']
 
 def compare(reading, value, comparator):
