@@ -7,7 +7,7 @@ from pybricks.tools import wait, StopWatch, DataLog
 from pybricks.robotics import DriveBase
 from pybricks.media.ev3dev import SoundFile, ImageFile
 
-import driver, menus, watcher, reactor
+import driver, menus, watcher, reactor, multisensor
 
 ev3 = EV3Brick()
 
@@ -16,8 +16,8 @@ right = Motor(Port.D)
 
 ev3.speaker.beep()
 
-titles = ['Motor Demo', 'Sonar Demo', 'Sonar Reaction']
-functions = [driver.drive, watcher.watch, reactor.react]
+titles = ['Motor Demo', 'Sonar Demo', 'Sonar Reaction', 'Reactive']
+functions = [driver.drive, watcher.watch, reactor.react, multisensor.setup]
 
 choice = menus.menuShowAll(ev3, titles)
 (functions[choice])(ev3, left, right)
