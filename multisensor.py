@@ -11,7 +11,7 @@ class SensorTester:
         self.action = action
 
     def act(self):
-        if self.sensor_test():
+        if self.sensor_test(self.sensor):
             return self.action
 
 class Controller:
@@ -34,11 +34,12 @@ class Controller:
 
 
 ports = {'S1': Port.S1, 'S2': Port.S2, 'S3': Port.S3, 'S4': Port.S4}
+port_list = sorted(ports.keys())
 
-labels  = ['Default'] + list(ports.keys())
-tests   = ['<=', '>']
-values  = [['50', '100', '150', '200', '250', '300'], ['0', '1']]#, ['20', '40', '60', '80'], ['20', '40', '60', '80']]
-actions = ['Stop', 'Forward', 'Backward', 'Left', 'Right']
+act_labels = ['Default'] + port_list
+tests      = ['<=', '>']
+values     = [['50', '100', '150', '200', '250', '300'], ['0', '1']]#, ['20', '40', '60', '80'], ['20', '40', '60', '80']]
+actions    = ['Stop', 'Forward', 'Backward', 'Left', 'Right']
 
 def compare(reading, value, comparator):
     if comparator == '<=':
@@ -47,6 +48,7 @@ def compare(reading, value, comparator):
         return reading > value
 
 sensors = {
+    'None': lambda port, test, value, action: SensorTester(None, lambda s: False, action),
     'Sonar': lambda port, test, value, action: SensorTester(UltrasonicSensor(port), lambda s: compare(s.distance(), value, test), action), 
     'Touch': lambda port, test, value, action: SensorTester(TouchSensor(port), lambda s: compare(1 if s.pressed() else 0, value, test), action)
 }
@@ -62,10 +64,10 @@ actions = {
 
 def setup(ev3, left, right):
     while True:
-        sensor_picks = menuManyOptions(ev3, labels, [list(sensors)] * len(labels))
-        comp_picks   = menuManyOptions(ev3, labels, [tests] * len(labels))
-        value_picks  = menuManyOptions(ev3, labels, [values] * len(labels))
-        action_picks = menuManyOptions(ev3, labels, [list(actions)] * len(labels))
+        sensor_picks = menuManyOptions(ev3, port_list, [list(sensors)] * len(labels))
+        comp_picks   = menuManyOptions(ev3, port_list, [tests] * len(labels))
+        value_picks  = menuManyOptions(ev3, port_list, [values] * len(labels))
+        action_picks = menuManyOptions(ev3, act_labels, [list(actions)] * len(labels))
 
         testers = [sensors[sensor_picks[i]](ports[i], comp_picks[i], value_picks[i], action_picks[i+1](left, right)) for i in range(len(ports))]
         ctrl = Controller(action_picks[0](left, right), testers)
