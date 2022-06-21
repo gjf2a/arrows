@@ -38,7 +38,7 @@ def refresh(ev3, items: List[str], current: int):
     ev3.screen.clear()
     for i, item in enumerate(items):
         fore, back = (Color.BLACK, Color.WHITE) if i != current else (Color.WHITE, Color.BLACK)
-        ev3.screen.draw_text(0, i * lib.TEXT_HEIGHT, item, text_color=fore, background_color=back)
+        ev3.screen.draw_text(0, i * (lib.TEXT_HEIGHT+3), item, text_color=fore, background_color=back)
          
 def menuManyOptions(ev3, list_labels: List[str], multi_option_list: List[List[str]]) -> List[int]:
     wait_until_clear(ev3)
