@@ -11,8 +11,10 @@ def wait_until_clear(ev3):
 def mod_inc(n: int, m: int) -> int:
     return (n + 1) % m
 
+
 def mod_dec(n: int, m: int) -> int:
     return (n - 1) % m
+
 
 def menuShowAll(ev3, items: List[str]) -> int:
     wait_until_clear(ev3)
@@ -36,11 +38,13 @@ def menuShowAll(ev3, items: List[str]) -> int:
         else:
             down = False
 
+
 def refresh(ev3, items: List[str], current: int):
     ev3.screen.clear()
     for i, item in enumerate(items):
         fore, back = (Color.BLACK, Color.WHITE) if i != current else (Color.WHITE, Color.BLACK)
         ev3.screen.draw_text(0, i * (lib.TEXT_HEIGHT + line_space), item, text_color=fore, background_color=back)
+
          
 def menuManyOptions(ev3, list_labels: List[str], multi_option_list: List[List[str]], choices=None) -> List[int]:
     wait_until_clear(ev3)
