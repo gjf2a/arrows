@@ -70,19 +70,19 @@ class Controller:
         print([(s.sensor_target, s.comparison) for s in self.testers])
         passers = [i for i, s in enumerate(self.testers) if s.passes()]
         print(passers)
-        winner = passers[0] if len(passers) > 0 else len(passers)
+        winner = passers[0] if len(passers) > 0 else len(self.testers)
         value_list = [port_list[i] + ":" + str(values[i]) for i in range(len(values))] + ['Default']
         refresh(self.ev3, value_list, winner)
-        return self.testers[winner].action if winner in range(len(self.testers)) else default_action
+        return self.testers[winner].action if winner in range(len(self.testers)) else self.default_action
 
 
 def setup(ev3, left, right):
+    sensor_picks = comp_picks = value_picks = action_picks = None
     while True:
-        sensor_picks = menuManyOptions(ev3, port_list, [sensor_list] * len(port_list))
-        comp_picks   = menuManyOptions(ev3, port_list, [[t[0] for t in tests]] * len(port_list))
-        value_picks  = menuManyOptions(ev3, port_list, [sensors[sensor_list[s]][0] for s in sensor_picks])
-        print("value_picks", value_picks)
-        action_picks = menuManyOptions(ev3, act_labels, [action_list] * len(act_labels))
+        sensor_picks = menuManyOptions(ev3, port_list, [sensor_list] * len(port_list), sensor_picks)
+        comp_picks   = menuManyOptions(ev3, port_list, [[t[0] for t in tests]] * len(port_list), comp_picks)
+        value_picks  = menuManyOptions(ev3, port_list, [sensors[sensor_list[s]][0] for s in sensor_picks], value_picks)
+        action_picks = menuManyOptions(ev3, act_labels, [action_list] * len(act_labels), action_picks)
 
         testers = []
         for i in range(len(ports)):

@@ -42,9 +42,9 @@ def refresh(ev3, items: List[str], current: int):
         fore, back = (Color.BLACK, Color.WHITE) if i != current else (Color.WHITE, Color.BLACK)
         ev3.screen.draw_text(0, i * (lib.TEXT_HEIGHT + line_space), item, text_color=fore, background_color=back)
          
-def menuManyOptions(ev3, list_labels: List[str], multi_option_list: List[List[str]]) -> List[int]:
+def menuManyOptions(ev3, list_labels: List[str], multi_option_list: List[List[str]], choices=None) -> List[int]:
     wait_until_clear(ev3)
-    choices = [0] * len(multi_option_list)
+    choices = [0] * len(multi_option_list) if choices is None else choices
     row = 0
     down = False
     refreshMany(ev3, list_labels, multi_option_list, row, choices)
@@ -73,7 +73,5 @@ def refreshMany(ev3, list_labels: List[str], multi_option_list: List[List[str]],
     ev3.screen.clear()
     for i, opt_list in enumerate(multi_option_list):
         fore, back = (Color.BLACK, Color.WHITE) if i != row else (Color.WHITE, Color.BLACK)
-        print(list_labels[i], type(list_labels[i]))
-        print(multi_option_list[i][options[i]], type(multi_option_list[i][options[i]]))
-        text = list_labels[i] + ":" + str(multi_option_list[i][options[i]])
+        text = list_labels[i] + ":" + str(multi_option_list[i][options[i % len(options)]])
         ev3.screen.draw_text(0, i * (lib.TEXT_HEIGHT + line_space), text, text_color=fore, background_color=back)
