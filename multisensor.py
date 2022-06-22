@@ -53,6 +53,7 @@ class Controller:
         self.default_action = default_action
         self.testers = testers
         self.stopper = stopper
+        self.last_values = None
 
     def control(self):
         while True:
@@ -68,7 +69,9 @@ class Controller:
         passers = [i for i, s in enumerate(self.testers) if s.passes()]
         winner = passers[0] if len(passers) > 0 else len(self.testers)
         value_list = [port_list[i] + ":" + str(values[i]) for i in range(len(values))] + ['Default']
-        refresh(self.ev3, value_list, winner)
+        if value_list != self.last_values:
+            refresh(self.ev3, value_list, winner)
+            self.last_values = value_list
         return self.testers[winner].action if winner in range(len(self.testers)) else self.default_action
 
 
