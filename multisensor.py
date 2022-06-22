@@ -12,7 +12,7 @@ tests      = {'<': lambda x, y: x < y, '>': lambda x, y: x > y, '=': lambda x, y
 
 sensors = {
     'None': ([0], ['='], lambda port, test, value, action: SensorTester(None, lambda s: 1, value, test, action)),
-    'Sonar': ([i for i in range(50, 350, 50)], ['<', '>'], lambda port, test, value, action: SensorTester(UltrasonicSensor(port), lambda s: s.distance(), value, test, action)), 
+    'Sonar': ([i for i in range(100, 1000, 100)], ['<', '>'], lambda port, test, value, action: SensorTester(UltrasonicSensor(port), lambda s: s.distance(), value, test, action)), 
     'Touch': (['closed', 'open'], ['='], lambda port, test, value, action: SensorTester(TouchSensor(port), lambda s: 'closed' if s.pressed() else 'open', value, test, action))
 }
 
@@ -20,14 +20,14 @@ sensor_list = sorted(sensors)
 
 speed = 360
 actions = {
-    'Stop':     lambda left, right: lib.Stop(left, right, 0),
-    'Forward':  lambda left, right: lib.Forward(left, right, speed),
-    'Backward': lambda left, right: lib.Backward(left, right, speed),
-    'Left':     lambda left, right: lib.Left(left, right, speed),
-    'Right':    lambda left, right: lib.Right(left, right, speed)
+    'Halt':        lambda left, right, m3: lib.Stop(left, right, 0, m3),
+    'Forward':     lambda left, right, m3: lib.Forward(left, right, speed, m3),
+    'Backward':    lambda left, right, m3: lib.Backward(left, right, speed, m3),
+    'Left':        lambda left, right, m3: lib.Left(left, right, speed, m3),
+    'Right':       lambda left, right, m3: lib.Right(left, right, speed, m3),
+    'SpinClock':   lambda left, right, m3: lib.SpinClock(left, right, speed, m3),
+    'SpinCounter': lambda left, right, m3: lib.SpinCounter(left, right, speed, m3)
 }
-
-action_list = sorted(actions)
 
 
 class SensorTester:
@@ -76,6 +76,15 @@ class Controller:
 
 
 def setup(ev3, left, right):
+    action_list = sorted(actions)
+
+    motor3 = menuManyOptions(ev3, ['3rd motor?'], [['No', 'Yes']])
+    if motor3[0] == 1:
+        motor3 = Motor(Port.B)
+    else:
+        motor3 = None
+        action_list = action_list[:-2]
+
     sensor_picks = comp_picks = value_picks = action_picks = None
     while True:
         sensor_picks = menuManyOptions(ev3, port_list, [sensor_list] * len(port_list), sensor_picks)
@@ -86,12 +95,12 @@ def setup(ev3, left, right):
         testers = []
         for i in range(len(ports)):
             sensor = sensor_list[sensor_picks[i]]
-            action = actions[action_list[action_picks[i+1]]](left, right)
+            action = actions[action_list[action_picks[i+1]]](left, right, motor3)
             port = ports[port_list[i]]
             test = tests[sensors[sensor][1][comp_picks[i]]]
             value = sensors[sensor][0][value_picks[i]]
             testers.append(sensors[sensor][2](port, test, value, action))
 
-        default_action = actions[action_list[action_picks[0]]](left, right)
-        ctrl = Controller(ev3, default_action, testers, lib.Stop(left, right, 0))
+        default_action = actions[action_list[action_picks[0]]](left, right, motor3)
+        ctrl = Controller(ev3, default_action, testers, lib.Stop(left, right, 0, motor3))
         ctrl.control()

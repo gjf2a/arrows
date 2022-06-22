@@ -16,8 +16,8 @@ right = Motor(Port.D)
 
 ev3.speaker.beep()
 
-titles = ['Motor Demo', 'Sonar Demo', 'Sonar Reaction', 'Reactive']
-functions = [driver.drive, watcher.watch, reactor.react, multisensor.setup]
+titles = ['Motor Demo', 'Sonar Demo', 'Reactive']#, 'Sonar Reaction']
+functions = [driver.drive, watcher.watch, multisensor.setup]#, reactor.react]
 
 choice = menus.menuShowAll(ev3, titles)
 (functions[choice])(ev3, left, right)
