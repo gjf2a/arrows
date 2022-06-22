@@ -73,4 +73,7 @@ def refreshMany(ev3, list_labels: List[str], multi_option_list: List[List[str]],
     ev3.screen.clear()
     for i, opt_list in enumerate(multi_option_list):
         fore, back = (Color.BLACK, Color.WHITE) if i != row else (Color.WHITE, Color.BLACK)
-        ev3.screen.draw_text(0, i * (lib.TEXT_HEIGHT + line_space), list_labels[i] + ":" + multi_option_list[i][options[i]], text_color=fore, background_color=back)
+        print(list_labels[i], type(list_labels[i]))
+        print(multi_option_list[i][options[i]], type(multi_option_list[i][options[i]]))
+        text = list_labels[i] + ":" + str(multi_option_list[i][options[i]])
+        ev3.screen.draw_text(0, i * (lib.TEXT_HEIGHT + line_space), text, text_color=fore, background_color=back)
