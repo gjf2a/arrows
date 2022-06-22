@@ -85,8 +85,7 @@ def setup(ev3, left, right):
             sensor = sensor_list[sensor_picks[i]]
             action = actions[action_list[action_picks[i+1]]](left, right)
             port = ports[port_list[i]]
-            test_list = sensors[sensor][1]
-            test = tests[test_list[comp_picks[i]]]
+            test = tests[sensors[sensor][1][comp_picks[i]]]
             value = sensors[sensor][0][value_picks[i]]
             testers.append(sensors[sensor][2](port, test, value, action))
 
