@@ -8,7 +8,7 @@ ports = {'S1': Port.S1, 'S2': Port.S2, 'S3': Port.S3, 'S4': Port.S4}
 port_list = sorted(ports.keys())
 
 act_labels = ['Default'] + port_list
-tests      = ['<=', '>']
+tests      = [('<=', lambda x, y: x <= y), ('>', lambda x, y: x > y)]
 
 sensors = {
     'None': ([0], lambda port, test, value, action: SensorTester(None, lambda s: 1, value, test, action)),
@@ -44,51 +44,52 @@ class SensorTester:
         return self.last_value
 
     def passes(self):
-        return compare(self.last_value, self.sensor_target, self.comparison)
+        return self.comparison(self.last_value, self.sensor_target)
 
 
 class Controller:
-    def __init__(self, ev3, default_action, testers):
+    def __init__(self, ev3, default_action, testers, stopper):
         self.ev3 = ev3
         self.default_action = default_action
         self.testers = testers
+        self.stopper = stopper
 
     def control(self):
         while True:
             pressed = self.ev3.buttons.pressed()
             if Button.CENTER in pressed:
+                self.stopper.act()
                 break
             else:
                 self.pick_action().act()
 
     def pick_action(self):
+        print("pick_action")
         values = [s.poll() for s in self.testers]
-        passers = [(i, s.passes()) for i, s in enumerate(self.testers)]
-        winner = passers[0][0] if len(passers) > 0 else len(passers)
+        print(values)
+        print([(s.sensor_target, s.comparison) for s in self.testers])
+        passers = [i for i, s in enumerate(self.testers) if s.passes()]
+        print(passers)
+        winner = passers[0] if len(passers) > 0 else len(passers)
         value_list = [port_list[i] + ":" + str(values[i]) for i in range(len(values))] + ['Default']
         refresh(self.ev3, value_list, winner)
         return self.testers[winner].action if winner in range(len(self.testers)) else default_action
 
 
-def compare(reading, value, comparator):
-    if comparator == '<=':
-        return reading <= value
-    else:
-        return reading > value
-
-
 def setup(ev3, left, right):
     while True:
         sensor_picks = menuManyOptions(ev3, port_list, [sensor_list] * len(port_list))
-        comp_picks   = menuManyOptions(ev3, port_list, [tests] * len(port_list))
+        comp_picks   = menuManyOptions(ev3, port_list, [[t[0] for t in tests]] * len(port_list))
         value_picks  = menuManyOptions(ev3, port_list, [sensors[sensor_list[s]][0] for s in sensor_picks])
+        print("value_picks", value_picks)
         action_picks = menuManyOptions(ev3, act_labels, [action_list] * len(act_labels))
 
         testers = []
         for i in range(len(ports)):
             sensor = sensor_list[sensor_picks[i]]
             action = actions[action_list[action_picks[i+1]]](left, right)
-            testers.append(sensors[sensor][1](ports[port_list[i]], comp_picks[i], value_picks[i], action))
+            testers.append(sensors[sensor][1](ports[port_list[i]], tests[comp_picks[i]][1], sensors[sensor][0][value_picks[i]], action))
 
-        ctrl = Controller(ev3, actions[action_list[action_picks[0]]](left, right), testers)
+        default_action = actions[action_list[action_picks[0]]](left, right)
+        ctrl = Controller(ev3, default_action, testers, lib.Stop(left, right, 0))
         ctrl.control()
