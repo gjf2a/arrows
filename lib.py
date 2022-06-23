@@ -55,3 +55,8 @@ def buttonLoop(ev3, action_map, instructions):
             action_map[pressed[0]].act()
 
 TEXT_HEIGHT = 16
+
+def waitNonePressed(ev3):
+    while True:
+        if len(ev3.buttons.pressed()) == 0:
+            return

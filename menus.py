@@ -59,7 +59,7 @@ def menuManyOptions(ev3, list_labels: List[str], multi_option_list: List[List[st
                 ev3.speaker.beep()
                 down = True
                 if Button.CENTER in pressed:
-                    return choices
+                    break
                 elif Button.UP in pressed:
                     row = mod_dec(row, len(multi_option_list))
                 elif Button.DOWN in pressed:
@@ -71,6 +71,9 @@ def menuManyOptions(ev3, list_labels: List[str], multi_option_list: List[List[st
                 refreshMany(ev3, list_labels, multi_option_list, row, choices)
         else:
             down = False
+
+    lib.waitNonePressed(ev3)
+    return choices
 
 
 def refreshMany(ev3, list_labels: List[str], multi_option_list: List[List[str]], row: int, options: List[int]):
